@@ -1,3 +1,8 @@
+;;;load chapter code to have access to functions in it
+(LOAD "~/repo/sicp/chapter1.scm")
+
+
+
 #| # Structure and Interpretation of Computer Programs - Exercises
 ## 1.1
 10
@@ -76,4 +81,17 @@
 |#
 
 ;;; 1.5
-;;; If the function is evaluated using normal-order evaluation, then the function will return 0. However, if applicative-order evalution is used, then the program will try keep running (p) as it calls itself, therefore never reaching a primitive function to be evaluated and therefore never completing running.
+;;; If the function is evaluated using normal-order evaluation, then the function will return 0. However, if applicative-order evalution is used, then the program will try keep running (p) as it calls itself, therefore never reaching a primitive function to be evaluated and therefore never completing running
+
+;;; 1.6
+
+(define (new-if predicate then-clause else-clause)
+  (cond (predicate then-clause)
+	(else else-clause)))
+
+(define (sqrt-iter-new-if guess x)
+  (new-if (good-enough? guess x)
+	  guess
+	  (sqrt-iter-new-if (improve guess x) x)))
+
+;;; If you try finding the square root then it appears to freeze and does not release control of the cursor back to you, as it is still running or trying to run the command. I think this is because scheme uses applicative order, that is it tries to evaluate all of the expressions before it running the function. Because it recursively calls itself, it continutes to try to evaluate the else-clause until available memory is filled.
