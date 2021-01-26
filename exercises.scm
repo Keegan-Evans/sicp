@@ -63,3 +63,61 @@
 ; interpreter will crash. 
 
 ; 1.6
+; 
+; (define (new-if predicate then-clause else-clause)
+;   (cond (predicate then-clause)
+;         (else else-clause)))
+; 
+; (define (ni-sqrt-iter guess x)
+;   (new-if (good-enough? guess x)
+;           guess
+;           (ni-sqrt-iter (improve guess x) x)))
+; 
+; The special form if only will evaluate one argument, the new procedure
+; does not specify to do this and thus it will try to evaluate both,
+; leading to repeated calls to itself.
+
+
+; 1.7
+; With large numbers, you might run out of precision for the storing of
+; the numbers. In the case of small numbers, 0.0001 can proportionally
+; be huge compared to the number. 
+; The new strategy should work equally well with both large and small
+; numbers, since it is based on proportional change. It might appear
+; more accurate on small numbers.
+
+(define (prop-chng-sqrt last-guess guess x)
+  (if (proportional-good-enough? last-guess guess x)
+      guess
+      (prop-chng-sqrt guess (improve guess x) x)))
+
+(define (proportional-good-enough? last-guess guess x)
+  (if (<
+        (abs (- 1
+                (/ last-guess 
+                   guess)))
+        0.001)
+      #t
+      #f))
+
+(define (prop-sqrt x)
+  (prop-chng-sqrt (+ x 0.0) 1.0 x))
+
+; 1.8
+
+(define (cbrt x)
+  (cb-iter 1.0 x))
+
+(define (cb-iter guess x)
+  (if (cb-good-enough? guess x)
+      guess
+      (cb-iter (cb-improve guess x) x)))
+
+(define (cb-improve guess x)
+  (/ (/ x (+ (square guess) (* 2 guess))) 3))
+
+(define (cb-good-enough? guess x)
+  (< (abs (- (cube guess) x)) 0.001))
+
+(define (cube x)
+  (* x x x))
