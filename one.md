@@ -62,7 +62,7 @@ FIR = Found in Racket
         (else (sum-of-squares a c))))
 
 (define (sum-of-squares a b)
-  (+ (square a) (square b))
+  (+ (square a) (square b)))
 ```
 
 Probably a better way to solve this is to create a sum-of-squares procedure
@@ -77,7 +77,7 @@ first two for the purposes of this procedure)
   ((if (> b 0)
        + 
        -)
-       a b)
+       a b))
 ```
 In this problem, we calculate the sum of $a$ and the absolute value of
 $b$. Rather than directly finding the absolute value of $b$, we change
@@ -164,7 +164,7 @@ FIR
   (< (abs (- (cube guess) x)) 0.001))
 
 (define (cube x)
-  (* x x x)
+  (* x x x))
 ```
 
 ### 1.9
@@ -183,7 +183,7 @@ produces a recursive process as it produces
 (+ 4 5)
 (inc (+ 3 5))
 (inc (inc (+ 2 5)))
-(inc (inc (inc (+ 1 5)))
+(inc (inc (inc (+ 1 5))))
 (inc (inc (inc (inc (+ 0 5)))))
 (inc (inc (inc (inc 5))))
 (inc (inc (inc 6)))
@@ -209,3 +209,61 @@ produces an iterative process:
 (+ 0 9)
 9
 ```
+
+### 1.10
+
+For all, if $n > 0$
+
+$f = 2n$
+
+$g = 2^n$
+
+$h =$ $^n2$ 
+(That is tetration)
+
+### 1.11
+
+Because the procedure for determing the output for input values above 3
+requires the 3 values below, we need to intialize with 3 integers: 
+
+$$ 2, 1, 0 $$
+
+Our transformations for working our way up are:
+
+$$ 
+a = a + 2b + 3c\newline
+b = a\newline
+c = b
+$$
+
+And finally, we know our count value to keep track if we have iterated
+far enough is: $n - 2$ as we are starting with the two values above 0.
+
+```scheme
+(define (f n)
+  (define (f-iter a b c cnt)
+    (cond ((< n 3) n)
+          ((< = cnt 0) a)
+          (else (f-iter (+ a 
+                           (* 2 b)
+                           (* 3 c))
+                        a
+                        b
+                        (- cnt 1)))))
+  (f-iter 2 1 0 (- n 2)))
+```
+
+FIR as `f111`.
+
+### 1.12
+FIR as `pasc-triangle`. Need to produce a cleaned up version, this one
+simply displays a list of each row on a seperate line, all aligned on
+the left.
+
+### 1.13
+
+$$
+\tree[.count-change11[.count-change10 \textit{bleh}]
+                      [.count-change9 \textit{bleh}]]
+$$
+

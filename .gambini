@@ -1,0 +1,3 @@
+(load "sicp.scm")
+(load "one.scm")
+
