@@ -267,3 +267,10 @@ $$
                       [.count-change9 \textit{bleh}]]
 $$
 
+### 1.19
+
+$$
+  a_1 \leftarrow bq + aq + ap
+  \newline
+  b_2 \leftarrow bp + aq
+$$

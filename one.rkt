@@ -1,3 +1,11 @@
+#lang racket
+(require racket/trace)
+(define (inc x)
+  (+ x 1))
+(define (dec x)
+  (- x 1))
+
+
 (define (sqrt-iter guess x)
   (if (good-enough? guess x)
       guess

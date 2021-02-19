@@ -1,3 +1,11 @@
+#lang racket
+(require racket/trace)
+(define (inc x)
+  (+ x 1))
+(define (dec x)
+  (- x 1))
+
+
 (define (sqrt-iter guess x)
   (if (good-enough? guess x)
       guess
@@ -159,3 +167,16 @@
   ;(newline)
   ;(print-triangle this-triangle)
   (print-triangle this-triangle))
+
+(define (fast-expt b n)
+  (define (feh a b n)
+    (cond ((= n 0) 
+           a)
+          ((even? n)
+           (feh (square a) b (- n 2)))
+          (else (feh (* b a)
+                     b
+                     (- n 1)))))
+  (feh 1 b n))
+
+(fast-expt 2 4)

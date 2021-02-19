@@ -1,3 +1,10 @@
+require racket/trace)
+(define (inc x)
+  (+ x 1))
+(define (dec x)
+  (- x 1))
+
+
 (define (sqrt-iter guess x)
   (if (good-enough? guess x)
       guess
@@ -159,3 +166,90 @@
   ;(newline)
   ;(print-triangle this-triangle)
   (print-triangle this-triangle))
+
+; Exercise 1.16
+(define (fast-expt b n)
+  (define (feh a b n)
+    (cond ((= n 0) 
+           a)
+          ((even? n)
+           (feh (* (square b) a) b (- n 2)))
+          (else (feh (* b a)
+                     b
+                     (- n 1)))))
+  (feh 1 b n))
+
+; 1.17 
+
+(define (fast-mult a b)
+  (define (double x)
+    (+ x x))
+  (define (mult-it y a b)
+    (cond ((= b 0)
+           y)
+          ((even? b)
+           (mult-it (+ (double a) y) 
+                    a
+                    (- b 2)))
+          (else (mult-it (+ y a)
+                         a
+                         (- b 1)))))
+  (mult-it 0 a b)) 
+
+; 1.18 Upon looking at this problem and looking at other people's answers, I
+; did this exercise in the last one and should have created a much simpler
+; recursive process in the last exercise...the wording is a bit ambiguous.jj
+
+; 1.19 
+
+(define (fib n)
+  (fib-iter 1 0 0 1 n))
+
+(define (fib-iter a b p q cnt)
+  (cond ((= cnt 0) b)
+        ((even? cnt)
+         (fib-iter a 
+                   b
+                   (+ (square p) 
+                      (square q))
+                   (+ (* 2 
+                         p
+                         q)
+                      (square q))
+                   (/ cnt 2)))
+        (else (fib-iter (+ (* b q) (* a q) (* a p))
+                        (+ (* b p) (* a q))
+                        p
+                        q
+                        (- cnt 1)))))
+
+    
+; 1.20
+;
+; Normal-order evaluation will return an error, as it will try to evaluate
+; all of the arguements rather than only evaluating until a conditional
+; returns #t, which is the case when using applicative order evaluation.
+; with this being the case, normal-order evaluation would result to one
+; more call to `remainder`, though this final call would return an error,
+; as calling remainder with 0 in the denomenator place is undefined. In
+; the example, there are 4 cals to `remainder` using applicative order
+; evaluation and 5 calls to `remainder` by a process using normal-order
+; evaluation. Additionally, the normal-order version will return an error,
+; rather than finding the GCD.
+
+
+(define remain-lst
+  (list (remainder  206 40)
+        (remainder 40 6)
+        (remainder 6 4)
+        (remainder 4 2)
+        ;(remainder 2 0)
+        ))
+(define (view-each lst)
+  (if (empty? lst)
+      '()
+      (cons (car lst) (view-each (cdr lst)))))
+
+(view-each remain-lst)
+
+
