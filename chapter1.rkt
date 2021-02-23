@@ -223,6 +223,23 @@ require racket/trace)
                         q
                         (- cnt 1)))))
 
+; 1.2.5 Greatest Common Divisors if r is the remainder when a is divided by b,
+; then the common divisors fo a and b are precisely the same as the common
+; divisors of b and r.  
+; GCD(a,b) = GCD(b,r)
+; gcd(206,40) = gcd(40,6) = gcd(6,4) = gcd(4,2) = gcd(2,0) = 2
+(define (gcd a b)
+  (if (= b 0)
+      a
+      (begin
+        (display (list a b))
+        (newline)
+        (gcd b (remainder a b)))))
+(gcd 206 40)
+
+; Lames Theorom: If Euclids Algorithm requires k steps to compute the gcd of
+; some pairm then the smaller number in the pair must be greater than or equal
+; to the kth fibonacci number.  
     
 ; 1.20
 ;
@@ -252,4 +269,53 @@ require racket/trace)
 
 (view-each remain-lst)
 
+; 1.2.6 Testing for Primality
+; Two methods presented here:
+;   - a O(sqrt(n)) one 
+;   - a probablistic one with a O(log n) order of growth
+
+; Determine if a number is prime by looking for its smallest divisor
+
+(define (smallest-divisor n)
+  (find-divisor n 2))
+
+(define (find-divisor n test-divisor)
+  (cond ((> (square test-divisor) n) n)
+        ((divides? test-divisor n) test-divisor)
+        (else (find-divisor n (+ test-divisor 1)))))
+(define (divides? a b)
+  (= (remainder b a) 0))
+
+; Using these procedures, we can test primality by determining if the smallest
+; divisor of a number is itself.
+
+(define (prime? n)
+  (= n (smallest-divisor n)))
+
+(prime? 6001)
+
+; The Fermat Test
+;
+; Fermat's Little Theorom:
+;
+;     If n is a prime number and a is a any positive integr less than n, then a
+;     raised to the nth power is congruent to a modulo n.
+;
+; congruent modulo n = True for two numbers if they have the same remainder
+; when divided by n.
+;
+; modulo n: Short for remainder modulo n, that is the remainder of a number a
+; when divided by n.
+;
+; When n is not prime, most numbers a<n with not satisfy the above relation. By
+; trying many values of a, we can get a good idea of whether n is prime or not.
+
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+        ((even? exp)
+         (remainder (square (expmod base (/ exp 2) m))
+                    m))
+        (else
+          (remainder (* base (expmod base (- exp 1) m))
+                     m))))
 
