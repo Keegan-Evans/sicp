@@ -1,3 +1,2 @@
-(load "sicp.scm")
-(load "one.scm")
-
+;(load "sicp.scm")
+;(load "one.scm")
