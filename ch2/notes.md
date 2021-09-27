@@ -15,4 +15,7 @@
 
 ### 2.1.2
 
-- _Abstraction Barrier_
+
+- _Abstraction Barrier_: The division between various levels of abstraction,
+  with the "higher" programs above and the "lower" implementation of data that
+  is to be consumed by the programs below.
