@@ -1,0 +1,228 @@
+; Chapter 2, Section 2
+; 2.17
+(define (last-pair lst)
+  (if (null? (cdr lst))
+    (car lst)
+    (last-pair (cdr lst))))
+
+; 2.18
+(define (rev lst)
+  (define (reviter org reved)
+    (if (null? org)
+      reved
+      (reviter (cdr org) (cons (car org) reved))))
+  (reviter lst '()))
+
+; 2.19
+(define (count-change amount)
+  (cc amount 5))
+
+(define (cc amount coin-values)
+  (cond ((= amount 0) 1)
+        ((or (< amount 0) (no-more? coin-values)) 0)
+        (else
+          (+ (cc amount
+                 (except-first-denomination coin-values))
+             (cc (- amount (first-denomination coin-values))
+                 coin-values)))))
+
+(define (no-more? coin-values)
+  (if (null? coin-values)
+    #t
+    #f))
+
+(define (except-first-denomination coin-values)
+  (cdr coin-values))
+
+(define (first-denomination coin-values)
+  (car coin-values))
+
+; 2.20
+(define (same-parity first . others)
+  (define (gather-parity parity others)
+    (cond ((null? others) (list))
+          ((boolean=? parity (odd? (car others)))
+           (cons (car others)
+                 (gather-parity parity (cdr others))))
+          (else (gather-parity parity (cdr others)))))
+  (let ((parity (odd? first)))
+    (cons first (gather-parity parity others))))
+
+; 2.21
+(define square (lambda (x) (* x x)))
+
+(define (square-list-rec items)
+  (if (null? items)
+    '()
+    (cons (square (car items))
+          (square-list-rec (cdr items)))))
+
+
+(define (square-list-map items)
+  (map square items))
+
+; 2.22
+(define (square-list-iter-1 items)
+  (define (iter things answer)
+    (if (null? things)
+      answer
+      (iter (cdr things)
+            (cons (square (car things))
+                  answer))))
+  (iter items '()))
+; Here you are starting at the front of the list and putting it on the back of
+; the output list, then adding each subsequent result to the front of the
+; list.
+
+(define (square-list-iter-2 items)
+  (define (iter things answer)
+    (if (null? things)
+      answer
+      (iter (cdr things)
+            (cons answer
+                  (square (car things))
+                  ))))
+  (iter items '()))
+; in this case, you are forming pairs in the right order, except that the list
+; structure is malformed, in that at the termination of the list(chain of
+; pairs) there is a number rather than an empty list/nil.
+
+; 2.23
+(define (for-each-ex proc items)
+  (cond ((null? items) (void))
+        (else
+          (proc (car items))
+          (for-each-ex proc (cdr items)))))
+
+; 2.24
+; (1 (2 (3 4)))
+
+; 2.25
+(define (demo-2-25-a)
+  (cadr (caddr (list 1 3 (list 5 7) 9))))
+
+(define (demo-2-25-b)
+  (caar (list (list 7))))
+
+(define (demo-2-25-c)
+  (cadadr
+    (cadadr
+      (cadadr (list 1 (list 2 (list 3 (list 4 ( list 5 (list 6 7))))))))))
+
+; 2.26
+; (append x y): (1 2 3 4 5 6)
+; (cons x y): ((1 2 3) 4 5 6)
+; (list x y): ((1 2 3) (4 5 6))
+
+; 2.27
+(define (deep-reverse thingy)
+  (define (deep-reverse-iter base reversed-so-far)
+    (cond ((null? base) reversed-so-far)
+          ((pair? (car base)) (deep-reverse-iter
+                          (cdr base)
+                          (cons (deep-reverse-iter (car base) '())
+                                 reversed-so-far)))
+          (else (deep-reverse-iter (cdr base)
+                                   (cons (car base)
+                                         reversed-so-far)))))
+
+  (deep-reverse-iter thingy '()))
+
+(define (demo-2-26)
+  (define x (list (list 1 2) (list 3 4)))
+  (deep-reverse x))
+
+; 2.28
+(define (demo-2-28)
+  (let ((tl (list (list 3 (list 4)) 5 (list 2 (list 6 7 (list 8 9) 1)))))
+    (display "Starting tree: ")(display tl)(newline)
+    (display "iterative: ")(display (fringe-iter tl))(newline)
+    (display "recursive: ")(display (fringe-recurse tl))(newline)))
+
+
+; iterative method --- overly complicated/does not work with list of identical
+; lists...pay more attention to what is going on and get working.
+(define (fringe-iter tree)
+  (define (fringer tree result)
+    (cond ((null? tree) result)
+          ((pair? tree)
+           (fringer (car tree) (fringer (cdr tree) result)))
+          (else (cons tree result))))
+
+  (fringer tree '()))
+
+
+; recursive method
+(define (fringe-recurse tree)
+  (cond ((null? tree) '())
+        ((not (pair? tree)) (list tree))
+        (else
+          (append (fringe-recurse (car tree))
+                  (fringe-recurse (cdr tree))))))
+
+; 2.29
+(define (mobile-demo)
+  (let ((l1 (make-branch 5 3))
+        (r1 (make-branch 10 1)))
+    (let ((m1 (make-mobile l1 r1)))
+      (display (left-branch m1)))))
+
+(define (make-mobile left right)
+  (list left right))
+
+(define (make-branch len struct)
+  (list len struct))
+
+; a
+(define (left-branch mobile)
+  (car mobile))
+(define (right-branch mobile)
+  (cadr mobile))
+
+(define (branch-length branch)
+  (car branch))
+
+(define (branch-structure branch)
+  (cadr branch))
+  ;(if (pair? (cdr branch))
+  ;    (cdr branch)
+  ;    (cadr branch)))
+
+(define (weight? struct)
+  (if (number? struct)
+      #t
+      #f))
+
+; a mobile will have a null cdr, a branch with a weight at the end a list with
+; a number in it.
+(define (branch-weight branch)
+  (if (weight? (branch-structure branch))
+      (branch-structure branch)
+      (total-weight branch)))
+
+; b total-weight
+
+(define (total-weight mobile)
+  (if (null? mobile)
+      0
+      (+ (branch-weight (left-branch mobile))
+         (branch-weight (right-branch mobile)))))
+
+; c balance considerations
+
+(define (balanced? mobile)
+  (let ((ll (branch-length (left-branch mobile)))
+        (lw (branch-weight (left-branch mobile)))
+        (rl (branch-length (right-branch mobile)))
+        (rw (branch-weight (right-branch mobile))))
+    (if (= (* ll lw)
+           (* rl rw))
+      #t
+      #f)))
+
+(define ba (make-branch 10 1))
+(define bb (make-branch 5 6))
+(define bc (make-branch 30 1))
+(define bbc (make-branch (/ 1 6)
+                         (make-mobile bb bc)))
+(define m3 (make-mobile ba bbc))
